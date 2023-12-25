@@ -1,7 +1,11 @@
-import ClassFile
+import ClassField
 
+cf = ClassField.Field()
 
+btn = 'add_file'        #Нажатие кнопки
 
-cf = ClassFile.File(number=1)
+if btn == 'add_file':
 
-print(cf.number)
+    cf.add_file('PointCsv.csv')
+
+    print(cf.list_file)

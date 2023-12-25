@@ -8,7 +8,5 @@ class File:
     def del_points(self,point):
         self.list_points.pop(point.index)
 
-
+    number = 0
     list_points = []
-
-

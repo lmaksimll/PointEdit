@@ -1,19 +1,27 @@
 import csv
+import ClassPoint
+import ClassFile
+class Field:
+    def add_file(self,name_file):
 
-file = open('PointCsv.csv','r',encoding='utf-8')
-#reader = csv.reader(file,delimiter=';',quotechar='"')
-reader = csv.DictReader(file,delimiter=';',quotechar='"')
+        self.count_file = self.count_file + 1
+        cf = ClassFile.File(number = self.count_file)
+        self.list_file.append(cf)
 
-for row in reader:
-    print(row)
+        file = open(name_file, 'r', encoding='utf-8')
+        reader = csv.DictReader(file, delimiter=';', quotechar='"')
 
-file2 = open('PointCsv2.csv','w',encoding='utf-8',newline='')
+        i = 0
+        for row in reader:
+            cp = ClassPoint(x=row.x, y=row.y, index = i, number_file = cf.number)
+            cf.set_points(cp)
+            i + 1
 
-data = [{'x' : '1', 'y' : '1'}]
+    def edit_file(self):
+        pass
 
-writer = csv.DictWriter(file2,fieldnames=list(data[0].keys()),delimiter=';',quoting=csv.QUOTE_MINIMAL)
+    def delete_point(self):
+        pass
 
-writer.writeheader()
-
-for d in data:
-    writer.writerow(d)
+    count_file = 0
+    list_file = []
