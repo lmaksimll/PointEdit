@@ -4,8 +4,3 @@ class Point:
         self.y = y
         self.index = index
         self.number_file = number_file
-
-    x = 0
-    y = 0
-    index = 0
-    number_file = 0
