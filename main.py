@@ -34,7 +34,6 @@ class PointPlotterApp:
                 self.canvas.draw()
                 return
 
-
     def import_points(self):
         file_path = filedialog.askopenfilename(filetypes=[("CSV files", "*.csv")])
         if file_path:
