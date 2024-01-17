@@ -17,10 +17,10 @@ class PointPlotterApp:
 
         self.points = []
         self.del_points = []
-        self.x0 = None
-        self.y0 = None
-        self.x1 = None
-        self.y1 = None
+        self.rec_x0 = None
+        self.rec_y0 = None
+        self.rec_x1 = None
+        self.rec_y1 = None
 
         self.canvas.mpl_connect('button_press_event', self.on_click)
         self.canvas.mpl_connect('button_press_event', self.on_press)
@@ -36,15 +36,15 @@ class PointPlotterApp:
         self.delete_button.grid(row=1, column=2, padx=15, pady=15)
 
     def on_press(self, event):
-        self.x0 = event.xdata
-        self.y0 = event.ydata
+        self.rec_x0 = event.xdata
+        self.rec_y0 = event.ydata
 
     def on_release(self, event):
-        self.x1 = event.xdata
-        self.y1 = event.ydata
-        self.rect.set_width(self.x1 - self.x0)
-        self.rect.set_height(self.y1 - self.y0)
-        self.rect.set_xy((self.x0, self.y0))
+        self.rec_x1 = event.xdata
+        self.rec_y1 = event.ydata
+        self.rect.set_width(self.rec_x1 - self.rec_x0)
+        self.rect.set_height(self.rec_y1 - self.rec_y0)
+        self.rect.set_xy((self.rec_x0, self.rec_y0))
         self.ax.add_patch(self.rect)
         self.canvas.draw()
 
@@ -69,8 +69,31 @@ class PointPlotterApp:
             with open(file_path, 'r', encoding='utf-8') as file:
                 reader = csv.DictReader(file, delimiter=';', quotechar='"')
                 for row in reader:
-                    x, y = float(row['x']), float(row['y'])
-                    self.points.append((x, y))
+                    if row['Time'] != '':
+                        x = float(row['Time'])
+                        if row['Frequency (Hz)1'] != '':
+                            y1 = float(row['Frequency (Hz)1'])
+                            if row['Frequency (Hz)2'] != '':
+                                y2 = float(row['Frequency (Hz)2'])
+                                if row['Frequency (Hz)3'] != '':
+                                    y3 = float(row['Frequency (Hz)3'])
+                                    if row['Frequency (Hz)4'] != '':
+                                        y4 = float(row['Frequency (Hz)4'])
+                                        if row['Frequency (Hz)5'] != '':
+                                            y5 = float(row['Frequency (Hz)5'])
+                                        else:
+                                            y5 = ''
+                                    else:
+                                        y4, y5 = '',''
+                                else:
+                                    y3, y4, y5 = '','',''
+                            else:
+                                y2, y3, y4, y5 = '','','',''
+                        else:
+                            y1, y2, y3, y4, y5 = '','','','',''
+                    else:
+                        return
+                    self.points.append((x, y1, y2, y3, y4, y5))
             self.plot_points()
 
     def export_points(self):
@@ -98,19 +121,28 @@ class PointPlotterApp:
         self.ax.clear()
 
         for point in self.points:
-            self.ax.plot(point[0], point[1], 'ro')
+            if point[0] != '' and point[1] != '' :
+                self.ax.plot(point[0], point[1], 'r.')
+                if point [2] != '':
+                    self.ax.plot(point[0], point[2], 'g.')
+                    if point[3] != '':
+                        self.ax.plot(point[0], point[3], 'b.')
+                        if point[4] != '':
+                            self.ax.plot(point[0], point[4], 'y.')
+                            if point[5] != '':
+                                self.ax.plot(point[0], point[5], 'm.')
 
         self.canvas.draw()
 
     def selection_points(self):
         for point in self.points:
-            if self.x1 > self.x0:
-                if point[0] >= self.x0 and point[0] <= self.x1 and point[1] <= self.y0 and point[1] >= self.y1:
+            if self.rec_x1 > self.rec_x0:
+                if point[0] >= self.rec_x0 and point[0] <= self.rec_x1 and point[1] <= self.rec_y0 and point[1] >= self.rec_y1:
                     self.ax.plot(point[0], point[1], 'gx')
                     self.del_points.append(point)
                     self.canvas.draw()
             else:
-                if point[0] <= self.x0 and point[0] >= self.x1 and point[1] >= self.y0 and point[1] <= self.y1:
+                if point[0] <= self.rec_x0 and point[0] >= self.rec_x1 and point[1] >= self.rec_y0 and point[1] <= self.rec_y1:
                     self.ax.plot(point[0], point[1], 'gx')
                     self.del_points.append(point)
                     self.canvas.draw()
